@@ -11,7 +11,7 @@ let handleEvents = async function(req, res) {
     }
     else {
         if (req.body.command === '/create_team') {
-            const { trigger_id } = req.body;
+            const { user_id, trigger_id } = req.body;
             try {
                 const result = await message.openCreateTeamDialog(trigger_id);
                 if (result.data.error) {
@@ -24,7 +24,7 @@ let handleEvents = async function(req, res) {
             }
         }
         if (req.body.command === '/delete_team') {
-            const { trigger_id } = req.body;
+            const { user_id, trigger_id } = req.body;
             try {
                 const result = await message.openDeleteTeamDialog(trigger_id);
                 if (result.data.error) {
@@ -37,7 +37,7 @@ let handleEvents = async function(req, res) {
             }
         }
         if (req.body.command === '/remove_user') {
-            const { trigger_id } = req.body;
+            const { user_id, trigger_id } = req.body;
             try {
                 const result = await message.openRemoveUserDialog(trigger_id);
                 if (result.data.error) {
@@ -50,7 +50,7 @@ let handleEvents = async function(req, res) {
             }
         }
         if (req.body.command === '/add_user') {
-            const { trigger_id } = req.body;
+            const { user_id, trigger_id } = req.body;
             try {
                 const result = await message.openAddUserDialog(trigger_id);
                 if (result.data.error) {
@@ -63,7 +63,7 @@ let handleEvents = async function(req, res) {
             }
         }
         if (req.body.command === '/team_info') {
-            const { trigger_id } = req.body;
+            const { user_id, trigger_id } = req.body;
             try {
                 const result = await message.openListUsersOnTeamDialog(trigger_id);
                 if (result.data.error) {
@@ -76,7 +76,7 @@ let handleEvents = async function(req, res) {
             }
         }
         if (req.body.command === '/update_team_position') {
-            const { trigger_id } = req.body;
+            const { user_id, trigger_id } = req.body;
             try {
                 const result = await message.openUpdateTeamDialog(trigger_id);
                 if (result.data.error) {
@@ -89,7 +89,7 @@ let handleEvents = async function(req, res) {
             }
         }
         if (req.body.command === '/my_teams') {
-            const { user_id } = req.body;
+            const { user_id, trigger_id } = req.body;
             try {
                 const teamNames = await teamService.getMyTeamNames(user_id);
                 message.sendShortMessage(user_id, res, `*Your teams are:*\n` +  teamNames.toString().replace(/[,]/g, "\n"));
@@ -99,7 +99,7 @@ let handleEvents = async function(req, res) {
             }
         }
         if (req.body.command === '/update_team_status') {
-            const { trigger_id } = req.body;
+            const { user_id, trigger_id } = req.body;
             try {
                 await message.openInOutDialog(trigger_id);
                 res.send('');
@@ -109,7 +109,7 @@ let handleEvents = async function(req, res) {
             }
         }
         if (req.body.command === '/gatekeeper') {
-            const { user_id } = req.body;
+            const { user_id, trigger_id } = req.body;
             try {
                 var readme_message = `
                 *The Source Allies In Out Board*\n
@@ -132,7 +132,7 @@ let handleEvents = async function(req, res) {
             }
         }
         if (req.body.command === '/whos_here') {
-            const { user_id } = req.body;
+            const { user_id, trigger_id } = req.body;
             try {
                 let result = await teamService.getAllTeamsStatus();
                 let empty = true;
