@@ -156,7 +156,7 @@ let handleEvents = async function(req, res) {
                 }
             } catch (e) {
                 console.log('error' ,e);
-                res.send(500);
+                message.sendErrorMessage(user_id, res, `An unknown error has occured.`);
             }
         }
         if (req.body.command === '/in') {
@@ -183,8 +183,7 @@ let handleEvents = async function(req, res) {
                     message.sendShortMessage(user_id, res, '*Please register for a team by typing `/add_user`.*');
                 }
             } catch (e) {
-                console.log('error');
-                res.send(500);
+                message.sendErrorMessage(user_id, res, '*Please register for a team by typing `/add_user`.*'); 
             }
         }
     
@@ -213,7 +212,7 @@ let handleEvents = async function(req, res) {
                 }
             } catch (e) {
                 console.log('error');
-                res.send(500);
+                message.sendErrorMessage(user_id, res, '*Please register for a team by typing `/add_user`.*');
             }
         }
     }
