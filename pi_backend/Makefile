@@ -31,6 +31,6 @@ test:
 	python3 -m coverage run --source gatekeeper -m pytest tests -p no:warnings
 
 run-prod:
-	gunicorn -w 2 -b "0.0.0.0:8000" gatekeeper:app
+	gunicorn -w 1 -b "0.0.0.0:8000" gatekeeper:app
 
 review: format test

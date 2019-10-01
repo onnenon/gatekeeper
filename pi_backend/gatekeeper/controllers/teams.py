@@ -4,6 +4,7 @@ from marshmallow import ValidationError
 
 import gatekeeper.whiteboard as whiteboard
 from gatekeeper.controllers.response import Error, Success
+from gatekeeper.exceptions import NotFoundError
 from gatekeeper.models.team import (
     Team,
     post_team_schema,
@@ -26,9 +27,9 @@ class TeamApi(Resource):
             team = Team.get_team(team_name)
             result = team_schema.dump(team)
             return Success(result).to_json(), 200
-        except ValidationError as err:
+        except NotFoundError as err:
             current_app.log_exception(err)
-            return Error(str(err)).to_json(), 400
+            return Error(str(err)).to_json(), 404
 
     def put(self, team_name):
         try:
@@ -39,7 +40,11 @@ class TeamApi(Resource):
             team.save()
             update_all_status()
             return None, 204
+        except NotFoundError as err:
+            current_app.log_exception(err)
+            return Error(str(err)).to_json(), 404
         except ValidationError as err:
+            current_app.log_exception(err)
             return Error(str(err)).to_json(), 400
 
     def patch(self, team_name):
@@ -52,11 +57,14 @@ class TeamApi(Resource):
             if board_position is not None:
                 team.set_board_position(board_position)
 
-            if team.board_position is not None and status is not None:
+            if status is not None:
                 team.status = status
             update_all_status()
             team.save()
             return None, 204
+        except NotFoundError as err:
+            current_app.log_exception(err)
+            return Error(str(err)).to_json(), 404
         except ValidationError as err:
             current_app.log_exception(err)
             return Error(str(err)).to_json(), 400
@@ -70,8 +78,9 @@ class TeamApi(Resource):
             team.delete()
             update_all_status()
             return None, 204
-        except ValidationError as err:
-            return Error(str(err)).to_json(), 400
+        except NotFoundError as err:
+            current_app.log_exception(err)
+            return Error(str(err)).to_json(), 404
 
 
 @api.resource("/api/teams/")
@@ -113,5 +122,9 @@ class TeamAndUser(Resource):
                 Error(f"User: {user_name} not found on Team: {team_name}").to_json(),
                 404,
             )
+        except NotFoundError as err:
+            current_app.log_exception(err)
+            return Error(str(err)).to_json(), 404
         except ValidationError as err:
+            current_app.log_exception(err)
             return Error(str(err)).to_json(), 400

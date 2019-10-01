@@ -3,14 +3,12 @@ Description=Gunicorn instance to serve Gatekeeper
 After=network.target
 
 [Service]
-User=root
-Group=root
 WorkingDirectory=/opt/sai-gatekeeper/pi_backend/
 Environment="PATH=/opt/venv/bin"
 Environment="USE_BOARD=true"
 Environment="FLASK_APP=gatekeeper"
-# ExecStart=/opt/gatekeeper/pi_backend/venv/bin/gunicorn --workers 3 --bind unix:gatekeeper.sock -m 007 gatekeeper:app
 ExecStart=/opt/venv/bin/gunicorn -w 1 -b "0.0.0.0:8000" gatekeeper:app
+# ExecStart=/opt/gatekeeper/pi_backend/venv/bin/gunicorn --workers 3 --bind unix:gatekeeper.sock -m 007 gatekeeper:app
 
 [Install]
 WantedBy=multi-user.target

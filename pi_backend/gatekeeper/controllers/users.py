@@ -3,6 +3,7 @@ from flask_restful import Api, Resource
 from marshmallow import ValidationError
 
 from gatekeeper.controllers.response import Error, Success
+from gatekeeper.exceptions import NotFoundError
 from gatekeeper.models.team import Team
 from gatekeeper.models.user import (
     User,
@@ -24,8 +25,9 @@ class UserApi(Resource):
             user = User.get_user(username)
             result = user_schema.dump(user)
             return Success(result).to_json(), 200
-        except ValidationError as err:
-            return Error(str(err)).to_json(), 400
+        except NotFoundError as err:
+            current_app.log_exception(err)
+            return Error(str(err)).to_json(), 404
 
     def patch(self, username):
         try:
@@ -38,7 +40,11 @@ class UserApi(Resource):
                 user._teams.append(team)
             user.save()
             return None, 204
+        except NotFoundError as err:
+            current_app.log_exception(err)
+            return Error(str(err)).to_json(), 404
         except ValidationError as err:
+            current_app.log_exception(err)
             return Error(str(err)).to_json(), 400
 
     def put(self, username):
@@ -53,7 +59,11 @@ class UserApi(Resource):
                 user._teams.append(team)
             user.save()
             return None, 204
+        except NotFoundError as err:
+            current_app.log_exception(err)
+            return Error(str(err)).to_json(), 404
         except ValidationError as err:
+            current_app.log_exception(err)
             return Error(str(err)).to_json(), 400
 
     def delete(self, username):
@@ -61,8 +71,9 @@ class UserApi(Resource):
             user = User.get_user(username)
             user.delete()
             return None, 204
-        except ValidationError as err:
-            return Error(str(err)).to_json(), 400
+        except NotFoundError as err:
+            current_app.log_exception(err)
+            return Error(str(err)).to_json(), 404
 
 
 @api.resource("/api/users/")
@@ -87,4 +98,5 @@ class UsersApi(Resource):
             new_user.save()
             return Success(f"User: {username} created successfully").to_json(), 201
         except ValidationError as err:
+            current_app.log_exception(err)
             return Error(str(err)).to_json(), 400

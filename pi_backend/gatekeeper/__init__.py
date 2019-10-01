@@ -15,11 +15,8 @@ register_blueprints(app)
 db.init_app(app)
 ma.init_app(app)
 
-
-@app.before_first_request
-def init_forum():
+with app.app_context():
     Base.metadata.create_all(bind=db.engine)
-
     toggle_status(2)
     update_all_status()
 
