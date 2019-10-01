@@ -1,0 +1,26 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      docker: 18
+    commands:
+      - pip install cfn-lint
+  pre_build:
+    commands:
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - cd slack_api
+  build:
+    commands:
+      - ./deploy/create-config-files.sh
+      - cfn-lint deploy/cloudformation.template.yml
+      - aws cloudformation validate-template --template-body file://deploy/cloudformation.template.yml
+      
+      - docker build -t "$REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION" .
+  post_build:
+    commands:
+      - if [ "${CODEBUILD_WEBHOOK_TRIGGER:-branch/master}" = "branch/master" ]; then docker push $REPOSITORY_URI:$CODEBUILD_RESOLVED_SOURCE_VERSION; fi
+artifacts:
+  discard-paths: yes
+  files:
+    - "**/*.template.yml"
+    - "**/*.config.json"

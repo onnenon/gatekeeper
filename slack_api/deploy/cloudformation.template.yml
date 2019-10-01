@@ -1,0 +1,209 @@
+Parameters:
+  Image:
+    Type: String
+    Description: Docker image to use for the ECS task
+
+  Version:
+    Type: String
+    Description: Current version of Gatekeeper
+
+  SlackAccessToken:
+    Type: String
+    Description: Access token that Gatekeeper uses to post messages to slack
+
+  SlackUserToken:
+    Type: String
+    Description: Token that gatekeeper uses to lookup users on slack
+
+  SlackSigningSecret:
+    Type: String
+    Description: Token that Gatekeeper uses to verify slack payload signatures
+
+  SlackApiUrl:
+    Type: String
+    Description: Url for the Slack API
+
+  PiApiUrl:
+    Type: String
+    Description: Url for the API that the Raspberry PI uses
+
+  SubnetIds:
+    Type: List<AWS::EC2::Subnet::Id>
+    Description: List of subnet ids to use for ECS
+  
+  DomainName:
+    Type: String
+    Description: Domain name to use for the gatekeeper API
+
+  HostedZone:
+    Type: String
+    Description: Hosted zone to put dns records in
+
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+    Description: VPC to put the ECS service in
+  
+Resources:
+  Certificate:
+    Type: Custom::Certificate
+    Properties:
+      DomainName: !Ref DomainName
+      ValidationMethod: DNS
+      ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:binxio-cfn-certificate-provider'
+
+  IssuedCertificate:
+    Type: Custom::IssuedCertificate
+    Properties:
+      CertificateArn: !Ref Certificate
+      ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:binxio-cfn-certificate-provider'
+
+  CertificateDNSRecord:
+    Type: Custom::CertificateDNSRecord
+    Properties:
+      CertificateArn: !Ref Certificate
+      DomainName: !Ref DomainName
+      ServiceToken: !Sub 'arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:binxio-cfn-certificate-provider'
+
+  DomainValidationRecord:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneName: !Ref HostedZone
+      RecordSets:
+        - Name: !GetAtt CertificateDNSRecord.Name
+          Type: !GetAtt CertificateDNSRecord.Type
+          TTL: 60
+          Weight: 1
+          SetIdentifier: !Ref Certificate
+          ResourceRecords:
+            - !GetAtt CertificateDNSRecord.Value
+
+  Service:
+    Type: AWS::ECS::Service
+    DependsOn:
+      - HttpsListener
+      - HttpListener
+    Properties:
+      Cluster: !ImportValue ECSDefaultCluster-ClusterName
+      LaunchType: FARGATE
+      TaskDefinition: !Ref TaskDefinition
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          Subnets: !Ref SubnetIds
+          AssignPublicIp: ENABLED
+          SecurityGroups:
+            - !ImportValue BaseNetworking-PublicSecurityGroupId
+      LoadBalancers:
+        - ContainerName: primary
+          ContainerPort: 80
+          TargetGroupArn: !Ref TargetGroup
+      DesiredCount: 1
+      DeploymentConfiguration:
+        MinimumHealthyPercent: 1
+        MaximumPercent: 200
+
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      RetentionInDays: 30
+
+  LoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Subnets: !Ref SubnetIds
+      SecurityGroups:
+        - !ImportValue BaseNetworking-PublicSecurityGroupId
+
+  HttpsListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    DependsOn: IssuedCertificate
+    Properties:
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroup
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      Certificates:
+        - CertificateArn: !Ref Certificate
+
+
+  HttpListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig: 
+            Protocol: HTTPS
+            Port: 443
+            Host: "#{host}"
+            Path: "/#{path}"
+            Query: "#{query}"
+            StatusCode: HTTP_301
+      LoadBalancerArn: !Ref LoadBalancer
+      Port: 80
+      Protocol: HTTP
+
+  TargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      TargetType: ip
+      VpcId: !Ref VpcId
+      Protocol: HTTP
+      Port: 80
+      HealthCheckPath: /healthcheck
+      HealthCheckProtocol: HTTP
+      HealthCheckIntervalSeconds: 10
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      UnhealthyThresholdCount: 5
+      TargetGroupAttributes:
+        - Key:  deregistration_delay.timeout_seconds
+          Value:  30
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Cpu: 256
+      Memory: 512
+      ExecutionRoleArn: !ImportValue ECSDefaultCluster-ClusterInstanceRole
+      TaskRoleArn: !ImportValue ECSDefaultCluster-ClusterInstanceRole
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      ContainerDefinitions:
+        - Name: primary
+          Essential: 'true'
+          Image: !Ref Image
+          PortMappings:
+            - ContainerPort: 80
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref LogGroup
+              awslogs-region: us-east-1
+              awslogs-stream-prefix: !Ref AWS::StackName
+          Environment:
+            - Name: PORT
+              Value: 80
+            - Name: ENCRYPTED_SLACK_ACCESS_TOKEN
+              Value: !Ref SlackAccessToken
+            - Name: ENCRYPTED_SLACK_USER_TOKEN
+              Value: !Ref SlackUserToken
+            - Name: ENCRYPTED_SLACK_SIGNING_SECRET
+              Value: !Ref SlackSigningSecret
+            - Name: SLACK_API_URL
+              Value: !Ref SlackApiUrl
+            - Name: ENCRYPTED_PI_API_URL
+              Value: !Ref PiApiUrl
+
+  DNSEntry:
+    Type: AWS::Route53::RecordSetGroup
+    Properties:
+      HostedZoneName: !Ref HostedZone
+      Comment: Gatekeeper
+      RecordSets:
+        - Name: !Ref DomainName
+          Type: A
+          AliasTarget:
+            HostedZoneId: !GetAtt LoadBalancer.CanonicalHostedZoneID
+            DNSName: !GetAtt LoadBalancer.DNSName
