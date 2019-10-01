@@ -3,8 +3,6 @@ The slack_api portion of this project is built and deployed with CodePipeline an
 
 You can view the pipeline here (log into aws shared account first): https://console.aws.amazon.com/codesuite/codepipeline/pipelines/sai-gatekeeper-pipeline/view
 
-
-
 ## Dependencies
 
 - Python3-devel or Python3-dev
@@ -27,3 +25,7 @@ Set necessary Environment:
 export FLASK_APP=gatekeeper
 export FLASK_ENV=development
 ```
+
+## Contributing
+
+Github users in the "All Teammates" team have Write access to this repository. The `master` branch is protected, and requires a PR with at least one approving review to merge.
