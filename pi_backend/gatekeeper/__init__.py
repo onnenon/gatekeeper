@@ -18,10 +18,10 @@ ma.init_app(app)
 
 @app.before_first_request
 def init_forum():
+    Base.metadata.create_all(bind=db.engine)
+
     toggle_status(2)
     update_all_status()
-
-    Base.metadata.create_all(bind=db.engine)
 
 
 @app.route("/status")

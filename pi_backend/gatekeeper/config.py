@@ -3,7 +3,6 @@ import os
 
 class Config(object):
     ENV = os.getenv("FLASK_ENV", "production")
-    DEBUG = True
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
