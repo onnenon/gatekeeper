@@ -233,7 +233,7 @@ Resources:
             MaxCapacity: 0
             MinCapacity: 0
           Schedule: cron(0 1 * * ? *)
-      ResourceId: >
+      ResourceId: >-
         !Join
           - "/"
           - - "service"
