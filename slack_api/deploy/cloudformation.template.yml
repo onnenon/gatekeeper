@@ -42,6 +42,17 @@ Parameters:
   VpcId:
     Type: AWS::EC2::VPC::Id
     Description: VPC to put the ECS service in
+
+  ScaleDownOffHours:
+    Type: String
+    Description: >-
+      Whether or not autoscaling should happen. If set to true, instances will
+      be scaled to 0 off-hours.
+  
+Conditions:
+  ScaleDownOffHours: !Equals
+    - !Ref ScaleDownOffHours
+    - 'true'
   
 Resources:
   Certificate:
@@ -207,3 +218,29 @@ Resources:
           AliasTarget:
             HostedZoneId: !GetAtt LoadBalancer.CanonicalHostedZoneID
             DNSName: !GetAtt LoadBalancer.DNSName
+  
+  ScalableTarget:
+    Type: AWS::ApplicationAutoScaling::ScalableTarget
+    Condition: ScaleDownOffHours
+    Properties:
+      MaxCapacity: 1
+      MinCapacity: 0
+      ScheduledActions:
+        - ScheduledActionName: Down
+          StartTime: '2019-11-01T00:00:00Z'
+          EndTime: '2999-11-01T00:00:00Z'
+          ScalableTargetAction:
+            MaxCapacity: 0
+            MinCapacity: 0
+          Schedule: cron(0 1 * * ? *)
+      ResourceId: >
+        !Join
+          - "/"
+          - - "service"
+          - - !ImportValue ECSDefaultCluster-ClusterName
+          - - !GetAtt Service.Name
+      RoleARN: !Sub >-
+        arn:aws:iam::${AWS::AccountId}:role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService
+      ScalableDimension: ecs:service:DesiredCount
+      ServiceNamespace: ecs
+      
