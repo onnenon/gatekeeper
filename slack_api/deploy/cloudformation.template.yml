@@ -233,12 +233,9 @@ Resources:
             MaxCapacity: 0
             MinCapacity: 0
           Schedule: cron(0 1 * * ? *)
-      ResourceId: >-
-        !Join
-          - "/"
-          - - "service"
-          - - !ImportValue ECSDefaultCluster-ClusterName
-          - - !GetAtt Service.Name
+      ResourceId: !Sub
+        - service/${ClusterName}/${Service.Name}
+        - ClusterName: !ImportValue ECSDefaultCluster-ClusterName
       RoleARN: !Sub >-
         arn:aws:iam::${AWS::AccountId}:role/aws-service-role/ecs.application-autoscaling.amazonaws.com/AWSServiceRoleForApplicationAutoScaling_ECSService
       ScalableDimension: ecs:service:DesiredCount
