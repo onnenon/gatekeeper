@@ -7,6 +7,7 @@
     "SlackApiUrl": "https://slack.com/api",
     "PiApiUrl": "AQICAHgmK7RLzJGLsX027nGL/3YoG67Jh4Mxgt5hOhZTg/kH0AG+7zOLSBYl3w7cYuujUze8AAAAezB5BgkqhkiG9w0BBwagbDBqAgEAMGUGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM+Plg+KG+a+Sjg35aAgEQgDjTddbyBwYwTsVMq33wt5tesiTplkdNhX1EQ+eAybachh54kbX1UhM0B/22hhaP9EmhABRyD9Il5g==",
     "VpcId": "vpc-65a65202",
+    "ScaleDownOffHours": "true",
     "SubnetIds": "subnet-7d6d270b,subnet-d897febd,subnet-ef42c9e3,subnet-1fd84335,subnet-dd1a49e0,subnet-a0fa9bf8",
     "DomainName": "gatekeeper.dev.sourceallies.com",
     "HostedZone": "dev.sourceallies.com."
