@@ -1,5 +1,6 @@
 from marshmallow import ValidationError, fields
 
+from gatekeeper.exceptions import NotFoundError
 from gatekeeper.models import Base, db, ma
 
 belongs_to = db.Table(
@@ -46,11 +47,11 @@ class User(Base):
             username: username to search for
 
         Raises:
-            ValidationError: if user with given username does not exist.
+            NotFoundError: if user with given username does not exist.
         """
         user = User.query.filter_by(username=username).first()
         if user is None:
-            raise ValidationError(f"User: {username} does not exist")
+            raise NotFoundError(f"User: {username} does not exist")
         return user
 
     @staticmethod

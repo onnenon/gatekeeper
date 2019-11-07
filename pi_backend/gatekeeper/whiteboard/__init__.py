@@ -13,11 +13,11 @@ if Config.USE_BOARD is not None:
     _pixels = neopixel.NeoPixel(board.D12, Config.ROW_COUNT)
 
 _colors = {
-    "red": (10, 0, 0),
-    "green": (0, 10, 0),
-    "blue": (0, 0, 10),
+    "red": (35, 0, 0),
+    "green": (0, 35, 0),
+    "blue": (0, 0, 35),
     "off": (0, 0, 0),
-    "yellow": (10, 7, 0),
+    "yellow": (45, 25, 0),
 }
 
 

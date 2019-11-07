@@ -1,6 +1,7 @@
 from marshmallow import ValidationError, fields
 
 from gatekeeper.config import Config
+from gatekeeper.exceptions import NotFoundError
 from gatekeeper.models import Base, db, ma
 
 
@@ -67,11 +68,11 @@ class Team(Base):
             teamname: teamname to search for
 
         Raises:
-            ValidationError: if team does not exist.
+            NotFoundError: if team does not exist.
         """
         team = Team.query.filter_by(name=name).first()
         if team is None:
-            raise ValidationError(f"Team: {name} does not exist.")
+            raise NotFoundError(f"Team: {name} does not exist.")
         return team
 
     @staticmethod
