@@ -7,7 +7,7 @@ belongs_to = db.Table(
     "belongs_to",
     Base.metadata,
     db.Column("user", db.Integer, db.ForeignKey("users.id"), primary_key=True),
-    db.Column("team", db.String, db.ForeignKey("teams.name"), primary_key=True),
+    db.Column("team", db.Integer, db.ForeignKey("teams.id"), primary_key=True),
     extend_existing=True,
 )
 

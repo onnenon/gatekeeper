@@ -9,10 +9,12 @@ class Team(Base):
 
     __tablename__ = "teams"
 
-    name = db.Column(db.String(30), primary_key=True, nullable=False)
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(30), unique=True, nullable=False)
     status = db.Column(db.Integer(), default=0)
     location = db.Column(db.String(30))
-    building = db.Column(db.String(30), default="vault")
+    building = db.Column(db.String(30), default="The Vault")
+    channel = db.Column(db.String(30))
     board_position = db.Column(db.Integer(), unique=True)
     _members = db.relationship("User", secondary="belongs_to")
 
@@ -50,27 +52,14 @@ class Team(Base):
     def to_json(self):
         """Returns a JSON representation of the team."""
         return {
+            "id": self.id,
             "name": self.name,
             "status": self.status,
             "location": self.location,
+            "building": self.building,
             "board_position": self.board_position,
+            "channel": self.channel,
         }
-
-    @staticmethod
-    def create_team_from_team(old_team, team_name):
-        new_team = Team()
-
-        new_team = Team()
-        new_team.name = team_name
-        new_team.board_position = old_team.board_position
-        old_team.board_position = None
-        new_team.status = old_team.status
-        new_team.location = old_team.location
-        new_team.building = old_team.building
-        db.session.add(old_team)
-        db.session.add(new_team)
-        db.session.commit()
-        return new_team
 
     @staticmethod
     def get_all():
@@ -138,17 +127,34 @@ class TeamSchema(ma.Schema):
         return [member.to_json() for member in team._members]
 
     class Meta:
-        fields = ("name", "status", "location", "board_position", "members")
+        fields = (
+            "id",
+            "name",
+            "location",
+            "building",
+            "board_position",
+            "channel",
+            "members",
+            "status",
+        )
 
 
 class TeamsSchema(ma.Schema):
     class Meta:
-        fields = ("name", "status", "location", "board_position")
+        fields = (
+            "id",
+            "name",
+            "location",
+            "building",
+            "board_position",
+            "channel",
+            "status",
+        )
 
 
 class PostTeamSchema(ma.Schema):
     class Meta:
-        fields = ("name", "location", "building", "board_position")
+        fields = ("name", "location", "building", "board_position", "channel")
 
 
 class TeamPutSchema(ma.Schema):

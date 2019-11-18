@@ -51,29 +51,13 @@ class TeamApi(Resource):
         try:
             team = Team.get_team(team_name)
             data = team_patch_schema.load(request.get_json())
-            board_position = data.get("board_position")
-            status = data.get("status")
-            location = data.get("location")
-            building = data.get("building")
-            name = data.get("name")
 
-            if board_position is not None:
-                team.set_board_position(board_position)
-            if status is not None:
-                team.status = status
-            if location is not None:
-                team.location = location
-            if building is not None:
-                team.building = building
-
+            for k, v in data.items():
+                if k == "board_postion":
+                    team.set_board_position(v)
+                else:
+                    setattr(team, k, v)
             team.save()
-
-            if name is not None:
-                new_team = Team.create_team_from_team(team, name)
-                new_team._members = team._members
-                team.delete()
-                new_team.save()
-
             update_all_status()
             return None, 204
         except NotFoundError as err:
@@ -108,12 +92,13 @@ class TeamsApi(Resource):
         try:
             data = post_team_schema.load(request.get_json())
             Team.validate_non_existance(data.get("name"))
-            position = data.get("board_position")
+            current_app.logger.debug(data)
             team = Team()
-            team.name = data.get("name")
-            team.location = data.get("location")
-            if position is not None:
-                team.set_board_position(position)
+            for k, v in data.items():
+                if k == "board_postion":
+                    team.set_board_position(v)
+                else:
+                    setattr(team, k, v)
             team.save()
             update_all_status()
             return Success(f"Team: {team.name} created").to_json(), 204
