@@ -8,15 +8,20 @@ authors = ["Stephen Onnen <stephen.onnen@gmail.com>"]
 python = "^3.6"
 Flask = "^1.1"
 Flask-Restful = "^0.3.7"
-"RPi.GPIO" = "^0.7.0"
 Gunicorn = "^19.9"
 Flask-SQLAlchemy = "^2.4"
 psycopg2-binary = "^2.8"
 marshmallow = "^3.2"
 flask_marshmallow = "^0.10.1"
 marshmallow-sqlalchemy = "^0.19.0"
-rpi_ws281x = "^4.2"
 adafruit-circuitpython-neopixel = "^3.3"
+
+rpi_gpio = { version = "^0.7.0", optional = true}
+rpi_ws281x = { version = "^4.2", optional = true}
+
+[tool.poetry.extras]
+rpi = ["rpi_gpio", "rpi_ws281x"]
+
 
 [tool.poetry.dev-dependencies]
 isort = "^4.3"

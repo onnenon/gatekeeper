@@ -11,7 +11,8 @@ class Team(Base):
 
     name = db.Column(db.String(30), primary_key=True, nullable=False)
     status = db.Column(db.Integer(), default=0)
-    location = db.Column(db.String(30), default="vault")
+    location = db.Column(db.String(30))
+    building = db.Column(db.String(30), default="vault")
     board_position = db.Column(db.Integer(), unique=True)
     _members = db.relationship("User", secondary="belongs_to")
 
@@ -54,6 +55,22 @@ class Team(Base):
             "location": self.location,
             "board_position": self.board_position,
         }
+
+    @staticmethod
+    def create_team_from_team(old_team, team_name):
+        new_team = Team()
+
+        new_team = Team()
+        new_team.name = team_name
+        new_team.board_position = old_team.board_position
+        old_team.board_position = None
+        new_team.status = old_team.status
+        new_team.location = old_team.location
+        new_team.building = old_team.building
+        db.session.add(old_team)
+        db.session.add(new_team)
+        db.session.commit()
+        return new_team
 
     @staticmethod
     def get_all():
@@ -131,16 +148,17 @@ class TeamsSchema(ma.Schema):
 
 class PostTeamSchema(ma.Schema):
     class Meta:
-        fields = ("name", "location", "board_position")
+        fields = ("name", "location", "building", "board_position")
 
 
 class TeamPutSchema(ma.Schema):
+    # Need to add more things here
     location = fields.String(required=True)
 
 
 class TeamPatchSchema(ma.Schema):
     class Meta:
-        fields = ("status", "board_position")
+        fields = ("status", "board_position", "name", "location", "building")
 
 
 team_schema = TeamSchema()
