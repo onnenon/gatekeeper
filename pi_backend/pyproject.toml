@@ -22,7 +22,6 @@ rpi_ws281x = { version = "^4.2", optional = true}
 [tool.poetry.extras]
 rpi = ["rpi_gpio", "rpi_ws281x"]
 
-
 [tool.poetry.dev-dependencies]
 isort = "^4.3"
 pytest = "^3.0"
