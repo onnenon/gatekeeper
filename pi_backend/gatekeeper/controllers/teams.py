@@ -92,7 +92,6 @@ class TeamsApi(Resource):
         try:
             data = post_team_schema.load(request.get_json())
             Team.validate_non_existance(data.get("name"))
-            current_app.logger.debug(data)
             team = Team()
             for k, v in data.items():
                 if k == "board_postion":
