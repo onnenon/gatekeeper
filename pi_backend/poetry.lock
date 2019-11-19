@@ -1,8 +1,8 @@
 [[package]]
-category = "main"
+category = "dev"
 description = "CircuitPython APIs for non-CircuitPython versions of Python such as CPython on Linux and MicroPython."
 name = "adafruit-blinka"
-optional = false
+optional = true
 python-versions = ">=3.4.0"
 version = "3.0.1"
 
@@ -13,10 +13,10 @@ spidev = "*"
 sysv_ipc = "*"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "CircuitPython library for NeoPixel LEDs."
 name = "adafruit-circuitpython-neopixel"
-optional = false
+optional = true
 python-versions = "*"
 version = "3.4.0"
 
@@ -24,18 +24,18 @@ version = "3.4.0"
 Adafruit-Blinka = "*"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Platform detection for use by libraries like Adafruit-Blinka."
 name = "adafruit-platformdetect"
-optional = false
+optional = true
 python-versions = ">=3.4.0"
 version = "1.3.4"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Pure python (i.e. no native extensions) access to Linux IO including I2C and SPI.  Drop in replacement for smbus and spidev modules."
 name = "adafruit-pureio"
-optional = false
+optional = true
 python-versions = "*"
 version = "0.2.3"
 
@@ -321,7 +321,7 @@ python-versions = "*"
 version = "2019.11.1"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Userspace Raspberry Pi PWM/PCM/SPI library for SK6812 and WS281X LEDs."
 name = "rpi-ws281x"
 optional = true
@@ -329,7 +329,7 @@ python-versions = "*"
 version = "4.2.2"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "A module to control Raspberry Pi GPIO channels"
 name = "rpi.gpio"
 optional = true
@@ -345,11 +345,11 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*"
 version = "1.13.0"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "Python bindings for Linux SPI access through spidev"
 marker = "sys_platform == \"linux\""
 name = "spidev"
-optional = false
+optional = true
 python-versions = "*"
 version = "3.4"
 
@@ -362,11 +362,11 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 version = "1.3.11"
 
 [[package]]
-category = "main"
+category = "dev"
 description = "System V IPC primitives (semaphores, shared memory and message queues) for Python"
 marker = "platform_system != \"Windows\""
 name = "sysv-ipc"
-optional = false
+optional = true
 python-versions = "*"
 version = "1.0.0"
 
@@ -407,10 +407,10 @@ version = "0.6.0"
 more-itertools = "*"
 
 [extras]
-rpi = ["RPI.GPIO", "rpi_ws281x"]
+rpi = []
 
 [metadata]
-content-hash = "108f9f9548c2795b93ef2a0efaa934b3dca1edc6e35ca2d93aacbf1be0200937"
+content-hash = "4826b128091454b0364acfb0b5cebc2af35af18f69cd1e55c0b8a0713f828dac"
 python-versions = "^3.6"
 
 [metadata.hashes]
