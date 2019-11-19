@@ -59,8 +59,8 @@ const openCreateTeamDialog = async (trigger_id) => {
                 {
                     type: 'text',
                     name: 'location',
-                    placeholder: 'The Vault',
-                    label: 'Location',
+                    placeholder: 'Upstairs, North Side',
+                    label: 'Location Inside Building',
                 },
                 {
                     type: 'text',

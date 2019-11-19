@@ -9,9 +9,12 @@ class Team(Base):
 
     __tablename__ = "teams"
 
-    name = db.Column(db.String(30), primary_key=True, nullable=False)
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.String(30), unique=True, nullable=False)
     status = db.Column(db.Integer(), default=0)
-    location = db.Column(db.String(30), default="vault")
+    location = db.Column(db.String(30))
+    building = db.Column(db.String(30), default="The Vault")
+    channel = db.Column(db.String(30))
     board_position = db.Column(db.Integer(), unique=True)
     _members = db.relationship("User", secondary="belongs_to")
 
@@ -49,10 +52,13 @@ class Team(Base):
     def to_json(self):
         """Returns a JSON representation of the team."""
         return {
+            "id": self.id,
             "name": self.name,
             "status": self.status,
             "location": self.location,
+            "building": self.building,
             "board_position": self.board_position,
+            "channel": self.channel,
         }
 
     @staticmethod
@@ -121,26 +127,44 @@ class TeamSchema(ma.Schema):
         return [member.to_json() for member in team._members]
 
     class Meta:
-        fields = ("name", "status", "location", "board_position", "members")
+        fields = (
+            "id",
+            "name",
+            "location",
+            "building",
+            "board_position",
+            "channel",
+            "members",
+            "status",
+        )
 
 
 class TeamsSchema(ma.Schema):
     class Meta:
-        fields = ("name", "status", "location", "board_position")
+        fields = (
+            "id",
+            "name",
+            "location",
+            "building",
+            "board_position",
+            "channel",
+            "status",
+        )
 
 
 class PostTeamSchema(ma.Schema):
     class Meta:
-        fields = ("name", "location", "board_position")
+        fields = ("name", "location", "building", "board_position", "channel")
 
 
 class TeamPutSchema(ma.Schema):
+    # Need to add more things here
     location = fields.String(required=True)
 
 
 class TeamPatchSchema(ma.Schema):
     class Meta:
-        fields = ("status", "board_position")
+        fields = ("status", "board_position", "name", "location", "building")
 
 
 team_schema = TeamSchema()

@@ -33,7 +33,6 @@ class UserApi(Resource):
         try:
             user = User.get_user(username)
             teams = user_patch_schema.load(request.get_json()).get("teams")
-            current_app.logger.debug(teams)
             for t in teams:
                 team_name = t.get("name")
                 team = Team.get_team(team_name)
@@ -52,7 +51,6 @@ class UserApi(Resource):
             user = User.get_user(username)
             user._teams = []
             teams = user_put_schema.load(request.get_json()).get("teams")
-            current_app.logger.debug(teams)
             for t in teams:
                 team_name = t.get("name")
                 team = Team.get_team(team_name)
