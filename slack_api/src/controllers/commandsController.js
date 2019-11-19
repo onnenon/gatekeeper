@@ -142,11 +142,15 @@ let handleEvents = async function(req, res) {
             try {
                 let result = await teamService.getAllTeamsStatus();
                 let empty = true;
-                let msgList = [];
-                msgList.push(`*Whos's here?*\n`);
-                for (var a = 0; a < result.teams.length; a++) {
-                    if (result.teams[a].status =='1') {
-                        msgList.push(`*${result.teams[a].team}*: \`${result.teams[a].location}\``);
+                let msgList = [`*Whos's here?*\n`];
+                for (const team of result.teams) {
+                    if (team.status =='1') {
+                        let msg = `*${team.teamName}*: \``;
+                        if (team.location != null) {
+                            msg += `${team.location} @ `;
+                        }
+                        msg += `${team.building}\``;
+                        msgList.push(msg);
                         empty = false;
                     }
                 }
@@ -154,7 +158,7 @@ let handleEvents = async function(req, res) {
                     message.sendShortMessage(user_id, res, `Nobody is here.`);
                 }
                 else {
-                    message.sendShortMessage(user_id, res, msgList.toString().replace(/[,]/g, '\n'));
+                    message.sendShortMessage(user_id, res, msgList.join('\n'));
                 }
             } catch (e) {
                 console.log('error' ,e);

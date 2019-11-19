@@ -69,18 +69,19 @@ module.exports.getTeamByID = async function(team_id) {
 }
 
 module.exports.getAllTeamsStatus = async function() {
-  var result = [];
   return new Promise(function(resolve, reject) {
     axios.get(PI_API_URL + '/teams/')
       .then(function (response) {
-        for (var team of response.data.data) {
-          result.push({team:team.name, status:team.status, location:team.location});
-        }
-        resolve({teams: result});
+        const teams = response.data.data.map((team) => ({
+          teamName: team.name,
+          ...team,
+          name: undefined,
+        }));
+        resolve({ teams });
       }).catch(function (error) {
-          console.log(error);
-          reject(error);
-    });
+        console.log(error);
+        reject(error);
+      });
   });
 }
 
