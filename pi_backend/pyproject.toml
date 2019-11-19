@@ -16,11 +16,12 @@ flask_marshmallow = "^0.10.1"
 marshmallow-sqlalchemy = "^0.19.0"
 adafruit-circuitpython-neopixel = "^3.3"
 
-rpi_gpio = { version = "^0.7.0", optional = true}
-rpi_ws281x = { version = "^4.2", optional = true}
+
+"RPI.GPIO" = {version = "^0.7.0", extras = ["rpi"], optional=true}
+rpi_ws281x = {version = "^4.2", extras = ["rpi"], optional=true}
 
 [tool.poetry.extras]
-rpi = ["rpi_gpio", "rpi_ws281x"]
+rpi = ["RPI.GPIO", "rpi_ws281x"]
 
 [tool.poetry.dev-dependencies]
 isort = "^4.3"
