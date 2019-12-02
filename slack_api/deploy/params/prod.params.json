@@ -6,9 +6,7 @@
     "SlackSigningSecret": "AQICAHj0rd9+A15pncr1JrWCjeFtR4hrNnZnqKAX0mW97lZXPAFlHpHwnOjzg5ggas5Ks1s0AAAAfjB8BgkqhkiG9w0BBwagbzBtAgEAMGgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMWlK3mbhBW8cz1+YBAgEQgDsEPYm7aeZ7b2G/Yi3NZ3cgS4J6uvnF2GaH+mjiYWgYXQ92cXNXSsDnL10g/nuUiDrgh70mAef6bMkPyA==",
     "SlackApiUrl": "https://slack.com/api",
     "PiApiUrl": "AQICAHj0rd9+A15pncr1JrWCjeFtR4hrNnZnqKAX0mW97lZXPAEwSXrxnl41lUmXf8ZQBjm0AAAAezB5BgkqhkiG9w0BBwagbDBqAgEAMGUGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMyGK4s4ngM/Z4fxUPAgEQgDgl1Je4mtTyZixPykMCKPKPMY8qQUdyyjYQbTPYleBsijQvPDMEHujS2k+AbuTMU7tXh0X3Yy9GSw==",
-    "VpcId": "vpc-a53cc8c2",
     "ScaleDownOffHours": "false",
-    "SubnetIds": "subnet-b0e78ed5,subnet-945b08a9,subnet-0bb02b21,subnet-bcc68cca,subnet-5b72f957,subnet-611d7d39",
     "DomainName": "gatekeeper.sourceallies.com",
     "HostedZone": "sourceallies.com."
 }
