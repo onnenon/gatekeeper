@@ -51,6 +51,10 @@ You can now access the Flask backend running on your local machine at `0.0.0.0:8
 
 When done, bring the database down with `make dbdown`
 
+### Setting up Slack
+
+See [this page](https://github.com/sourceallies/sai-gatekeeper/wiki/Slack-API-Deployment-Instructions) for instructions on how to setup and deploy the Slack API. 
+
 ## Contributing
 
 Github users in the "All Teammates" team have Write access to this repository. The `master` branch is protected, and requires a PR with at least one approving review to merge.
