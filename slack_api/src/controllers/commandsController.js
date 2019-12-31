@@ -10,7 +10,9 @@ let handleEvents = async function(req, res) {
         res.sendStatus(404);
     }
     else {
-        if (req.body.command === '/create_team') {
+        const command = req.body.command.replace(/^\/(qual|dev)_/, '/');
+
+        if (command === '/create_team') {
             const { trigger_id } = req.body;
             try {
                 const result = await message.openCreateTeamDialog(trigger_id);
@@ -23,7 +25,7 @@ let handleEvents = async function(req, res) {
                 message.sendErrorMessage(user_id, res, `An unknown error has occured.`);
             }
         }
-        if (req.body.command === '/delete_team') {
+        if (command === '/delete_team') {
             const { trigger_id } = req.body;
             try {
                 const result = await message.openDeleteTeamDialog(trigger_id);
@@ -36,7 +38,7 @@ let handleEvents = async function(req, res) {
                 message.sendErrorMessage(user_id, res, `An unknown error has occured.`);
             }
         }
-        if (req.body.command === '/remove_user') {
+        if (command === '/remove_user') {
             const { trigger_id } = req.body;
             try {
                 const result = await message.openRemoveUserDialog(trigger_id);
@@ -49,7 +51,7 @@ let handleEvents = async function(req, res) {
                 message.sendErrorMessage(user_id, res, `An unknown error has occured.`);
             }
         }
-        if (req.body.command === '/add_user') {
+        if (command === '/add_user') {
             const { trigger_id } = req.body;
             try {
                 const result = await message.openAddUserDialog(trigger_id);
@@ -62,7 +64,7 @@ let handleEvents = async function(req, res) {
                 message.sendErrorMessage(user_id, res, `An unknown error has occured.`);
             }
         }
-        if (req.body.command === '/team_info') {
+        if (command === '/team_info') {
             const { trigger_id } = req.body;
             try {
                 const result = await message.openListUsersOnTeamDialog(trigger_id);
@@ -75,7 +77,7 @@ let handleEvents = async function(req, res) {
                 message.sendErrorMessage(user_id, res, `An unknown error has occured.`);
             }
         }
-        if (req.body.command === '/update_team_position') {
+        if (command === '/update_team_position') {
             const { trigger_id } = req.body;
             try {
                 const result = await message.openUpdateTeamDialog(trigger_id);
@@ -88,7 +90,7 @@ let handleEvents = async function(req, res) {
                 message.sendErrorMessage(user_id, res, `An unknown error has occured.`);
             }
         }
-        if (req.body.command === '/my_teams') {
+        if (command === '/my_teams') {
             const { user_id } = req.body;
             try {
                 const teamNames = await teamService.getMyTeamNames(user_id);
@@ -102,7 +104,7 @@ let handleEvents = async function(req, res) {
                 message.sendErrorMessage(user_id, res, `An unknown error has occured.`);
             }
         }
-        if (req.body.command === '/update_team_status') {
+        if (command === '/update_team_status') {
             const { trigger_id } = req.body;
             try {
                 await message.openInOutDialog(trigger_id);
@@ -112,7 +114,7 @@ let handleEvents = async function(req, res) {
                 message.sendErrorMessage(user_id, res, `An unknown error has occured.`);
             }
         }
-        if (req.body.command === '/gatekeeper') {
+        if (command === '/gatekeeper') {
             const { user_id } = req.body;
             try {
                 var readme_message = `
@@ -135,7 +137,7 @@ let handleEvents = async function(req, res) {
                 message.sendErrorMessage(user_id, res, `An unknown error has occured.`);
             }
         }
-        if (req.body.command === '/whos_here') {
+        if (command === '/whos_here') {
             const { user_id } = req.body;
             try {
                 let result = await teamService.getAllTeamsStatus();
@@ -159,7 +161,7 @@ let handleEvents = async function(req, res) {
                 message.sendErrorMessage(user_id, res, `An unknown error has occured.`);
             }
         }
-        if (req.body.command === '/in') {
+        if (command === '/in') {
             const { user_id, trigger_id } = req.body;
             try {
                 let result = await teamService.checkIfUserHasMultipleTeams(user_id);
@@ -187,7 +189,7 @@ let handleEvents = async function(req, res) {
             }
         }
     
-        if (req.body.command === '/out') {
+        if (command === '/out') {
             const { user_id, trigger_id } = req.body;
             try {
                 let result = await teamService.checkIfUserHasMultipleTeams(user_id);
