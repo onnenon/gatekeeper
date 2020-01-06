@@ -35,8 +35,8 @@ let handleInteractions = async function(req, res) {
             }
             else if (callback_id === 'deleteTeam') {
                 try {
-                    await teamService.deleteTeam(submission.team);
-                    message.sendShortMessage(user.id, res, `*Deleted team:* \`${submission.team}\``);
+                    await teamService.deleteTeam(submission.teamName);
+                    message.sendShortMessage(user.id, res, `*Deleted team:* \`${submission.teamName}\``);
                 
                 } catch (e) {
                     console.log('error');
@@ -46,8 +46,8 @@ let handleInteractions = async function(req, res) {
             }
             else if (callback_id === 'listTeam') {
                 try {
-                    let result = await teamService.listUsersOnTeam(submission.team);
-                    let teamResult = await teamService.getTeamByID(submission.team);
+                    let result = await teamService.listUsersOnTeam(submission.teamName);
+                    let teamResult = await teamService.getTeamByID(submission.teamName);
                     let team = teamResult.data;
                     result = json2array(result);
                     let formattedList = []
@@ -56,10 +56,10 @@ let handleInteractions = async function(req, res) {
                         formattedList.push(`\`${person}\`\n`);
                     }
                     if (result.length != 0) {
-                        message.sendShortMessage(user.id, res, `*Team Name: *\`${submission.team}\`\n *Board position: *\`${team.board_position}\`\n *location: * \`${team.location}\`\n *Members: *\n` +  formattedList.toString().replace(/[,]/g, ""));
+                        message.sendShortMessage(user.id, res, `*Team Name: *\`${submission.teamName}\`\n *Board position: *\`${team.board_position}\`\n *location: * \`${team.location}\`\n *Members: *\n` +  formattedList.toString().replace(/[,]/g, ""));
                     }
                     else {
-                        message.sendErrorMessage(user.id, res, `*The team \`${submission.team}\` has no teammates yet.*`);
+                        message.sendErrorMessage(user.id, res, `*The team \`${submission.teamName}\` has no teammates yet.*`);
                     }
                 } catch (e) {
                     console.log('error');
@@ -68,8 +68,8 @@ let handleInteractions = async function(req, res) {
             }
             else if (callback_id === 'addUser') {
                 try {
-                    await teamService.addUserToTeam(submission.user, submission.team);
-                    message.sendShortMessage(user.id, res, `*Successfully added user to the team:* \`${submission.team}\``);
+                    await teamService.addUserToTeam(submission.user, submission.teamName);
+                    message.sendShortMessage(user.id, res, `*Successfully added user to the team:* \`${submission.teamName}\``);
                 } catch (e) {
                     console.log('error');
                     message.sendErrorMessage(user.id, res, `*Failed to add user*`);
@@ -77,17 +77,17 @@ let handleInteractions = async function(req, res) {
             }
             else if (callback_id === 'removeUser') {
                 try {
-                    await teamService.removeUserFromTeam(submission.user, submission.team);
-                    message.sendShortMessage(user.id, res, `*Successfully removed user from the team:* \`${submission.team}\``);
+                    await teamService.removeUserFromTeam(submission.user, submission.teamName);
+                    message.sendShortMessage(user.id, res, `*Successfully removed user from the team:* \`${submission.teamName}\``);
                 
                 } catch (e) {
-                    message.sendErrorMessage(user.id, res, `*That user is not currently on team:* \`${submission.team}\``);
+                    message.sendErrorMessage(user.id, res, `*That user is not currently on team:* \`${submission.teamName}\``);
                 }
             }
             else if (callback_id === 'inout') {
                 try {
-                    await teamService.updateTeamStatus(submission.team, submission.status);
-                    message.sendShortMessage(user.id, res, `*Successfully set \`${submission.team}'s\` status to:* \`${submission.status}\``);
+                    await teamService.updateTeamStatus(submission.teamName, submission.status);
+                    message.sendShortMessage(user.id, res, `*Successfully set \`${submission.teamName}'s\` status to:* \`${submission.status}\``);
                 
                 } catch (e) {
                     console.log('error');
@@ -96,8 +96,8 @@ let handleInteractions = async function(req, res) {
             }
             else if (callback_id === 'in') {
                 try {
-                    await teamService.updateTeamStatus(submission.team, 'in');
-                    message.sendShortMessage(user.id, res, `*Successfully set \`${submission.team}'s\` status to:* \`in\``);
+                    await teamService.updateTeamStatus(submission.teamName, 'in');
+                    message.sendShortMessage(user.id, res, `*Successfully set \`${submission.teamName}'s\` status to:* \`in\``);
                 } catch (e) {
                     console.log('error');
                     message.sendErrorMessage(user.id, res, `*Failed To Set Status*`);
@@ -105,8 +105,8 @@ let handleInteractions = async function(req, res) {
             }
             else if (callback_id === 'out') {
                 try {
-                    await teamService.updateTeamStatus(submission.team, 'out');
-                    message.sendShortMessage(user.id, res, `*Successfully set \`${submission.team}'s\` status to:* \`out\``);
+                    await teamService.updateTeamStatus(submission.teamName, 'out');
+                    message.sendShortMessage(user.id, res, `*Successfully set \`${submission.teamName}'s\` status to:* \`out\``);
                 } catch (e) {
                     console.log('error');
                     message.sendErrorMessage(user.id, res, `*Failed To Set Status*`);
@@ -114,8 +114,8 @@ let handleInteractions = async function(req, res) {
             }
             else if (callback_id === 'updatePosition') {
                 try {
-                    await teamService.updateTeamPosition(submission.team, Number(submission.board_position));
-                    message.sendShortMessage(user.id, res, `*Successfully updated \`${submission.team}'s\` board position to:* \`${submission.board_position}\``);
+                    await teamService.updateTeamPosition(submission.teamName, Number(submission.board_position));
+                    message.sendShortMessage(user.id, res, `*Successfully updated \`${submission.teamName}'s\` board position to:* \`${submission.board_position}\``);
                 } catch (e) {
                     console.log('error');
                     message.sendErrorMessage(user.id, res, `*Failed Updating Board Position*`);
